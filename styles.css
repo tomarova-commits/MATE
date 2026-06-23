@@ -107,29 +107,62 @@ a:focus-visible {
   background: oklch(0.2157 0.0453 145.7256);
 }
 
+.profile__hero::before {
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  content: "";
+  background:
+    linear-gradient(115deg, transparent 0 18%, oklch(0.5752 0.1446 144.1813 / 0.48) 26%, transparent 38%),
+    linear-gradient(68deg, transparent 0 24%, oklch(0.6731 0.1624 144.2083 / 0.30) 36%, transparent 50%),
+    linear-gradient(156deg, oklch(0.2157 0.0453 145.7256), oklch(0.4254 0.1159 144.3078), oklch(0.2926 0.0212 147.7496));
+  background-size: 170% 170%, 150% 150%, 100% 100%;
+  animation: forest-flow 9s ease-in-out infinite alternate;
+}
+
 .profile__hero::after {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 2;
   content: "";
   background:
-    linear-gradient(90deg, oklch(0.2157 0.0453 145.7256 / 0.92), transparent 54%),
-    linear-gradient(0deg, oklch(0.2157 0.0453 145.7256 / 0.54), transparent 64%);
+    linear-gradient(90deg, oklch(0.2157 0.0453 145.7256 / 0.74), transparent 58%),
+    linear-gradient(0deg, oklch(0.2157 0.0453 145.7256 / 0.42), transparent 68%);
+  pointer-events: none;
 }
 
 .profile__hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .header-shader {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: 1;
   width: 100%;
   height: 100%;
   display: block;
   background: oklch(0.2157 0.0453 145.7256);
+  opacity: 0.88;
+}
+
+@keyframes forest-flow {
+  0% {
+    background-position: 0% 50%, 100% 35%, 50% 50%;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+
+  100% {
+    background-position: 100% 48%, 0% 62%, 50% 50%;
+    transform: scale(1.04) translate3d(-1.5%, 1%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile__hero::before {
+    animation: none;
+  }
 }
 
 .profile__toolbar {
