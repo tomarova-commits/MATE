@@ -126,8 +126,8 @@ a:focus-visible {
   z-index: 2;
   content: "";
   background:
-    linear-gradient(90deg, oklch(0.2157 0.0453 145.7256 / 0.74), transparent 58%),
-    linear-gradient(0deg, oklch(0.2157 0.0453 145.7256 / 0.42), transparent 68%);
+    linear-gradient(90deg, oklch(0.2157 0.0453 145.7256 / 0.54), transparent 60%),
+    linear-gradient(0deg, oklch(0.2157 0.0453 145.7256 / 0.30), transparent 70%);
   pointer-events: none;
 }
 
@@ -144,7 +144,7 @@ a:focus-visible {
   height: 100%;
   display: block;
   background: oklch(0.2157 0.0453 145.7256);
-  opacity: 0.88;
+  opacity: 1;
 }
 
 @keyframes forest-flow {

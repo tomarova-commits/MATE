@@ -65,101 +65,111 @@ themeToggle.addEventListener("click", () => {
 });
 
 function initHeaderShader(canvas) {
-  const gl = canvas.getContext("webgl", { antialias: false, alpha: false });
+  const ctx = canvas.getContext("2d");
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (!gl || prefersReducedMotion) {
+  if (!ctx) {
     return;
   }
 
-  const vertexShaderSource = `
-    attribute vec2 position;
+  const waves = [
+    {
+      color: "rgba(221, 245, 185, 0.96)",
+      glow: "rgba(139, 205, 111, 0.42)",
+      width: 2.8,
+      amp: 30,
+      freq: 1.18,
+      speed: 0.0011,
+      y: 0.38,
+    },
+    {
+      color: "rgba(151, 219, 126, 0.82)",
+      glow: "rgba(84, 165, 82, 0.34)",
+      width: 2.2,
+      amp: 44,
+      freq: 1.62,
+      speed: -0.00086,
+      y: 0.52,
+    },
+    {
+      color: "rgba(234, 247, 201, 0.58)",
+      glow: "rgba(188, 231, 143, 0.28)",
+      width: 1.5,
+      amp: 22,
+      freq: 2.35,
+      speed: 0.00128,
+      y: 0.29,
+    },
+  ];
 
-    void main() {
-      gl_Position = vec4(position, 0.0, 1.0);
-    }
-  `;
-
-  const fragmentShaderSource = `
-    precision highp float;
-
-    uniform vec2 resolution;
-    uniform float time;
-
-    vec3 palette(float t) {
-      vec3 pine = vec3(0.025, 0.115, 0.075);
-      vec3 moss = vec3(0.130, 0.285, 0.150);
-      vec3 fern = vec3(0.280, 0.530, 0.250);
-      vec3 sage = vec3(0.560, 0.670, 0.460);
-
-      vec3 first = mix(pine, moss, smoothstep(0.0, 0.45, t));
-      vec3 second = mix(fern, sage, smoothstep(0.45, 1.0, t));
-      return mix(first, second, smoothstep(0.28, 0.88, t));
-    }
-
-    void main() {
-      vec2 uv = gl_FragCoord.xy / resolution;
-      vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
-
-      float waveA = sin((p.x * 2.1 + time * 0.42) + sin(p.y * 2.0) * 0.7);
-      float waveB = sin((p.x * 3.4 - time * 0.27) + cos(p.y * 3.2 + time * 0.18));
-      float waveC = sin(length(p * vec2(1.25, 0.72)) * 5.0 - time * 0.55);
-      float ribbon = smoothstep(0.78, 0.08, abs(p.y + waveA * 0.16 + waveB * 0.07));
-      float mist = 0.5 + 0.5 * waveC;
-      float shade = clamp(uv.y * 0.50 + ribbon * 0.48 + mist * 0.20, 0.0, 1.0);
-
-      vec3 color = palette(shade);
-      color += vec3(0.025, 0.070, 0.035) * ribbon;
-      color *= 0.72 + 0.28 * smoothstep(-0.92, 0.70, p.x);
-
-      gl_FragColor = vec4(color, 1.0);
-    }
-  `;
-
-  const compileShader = (type, source) => {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
-  };
-
-  const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  gl.useProgram(program);
-
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-    gl.STATIC_DRAW,
-  );
-
-  const positionLocation = gl.getAttribLocation(program, "position");
-  gl.enableVertexAttribArray(positionLocation);
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-  const resolutionLocation = gl.getUniformLocation(program, "resolution");
-  const timeLocation = gl.getUniformLocation(program, "time");
   let animationFrame = 0;
+  let width = 0;
+  let height = 0;
+  let ratio = 1;
 
   const resize = () => {
-    const { width, height } = canvas.getBoundingClientRect();
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.floor(width * ratio));
-    canvas.height = Math.max(1, Math.floor(height * ratio));
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+    const rect = canvas.getBoundingClientRect();
+    ratio = Math.min(window.devicePixelRatio || 1, 2);
+    width = Math.max(1, Math.floor(rect.width));
+    height = Math.max(1, Math.floor(rect.height));
+    canvas.width = Math.floor(width * ratio);
+    canvas.height = Math.floor(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   };
 
   const render = (timestamp) => {
-    gl.uniform1f(timeLocation, timestamp * 0.001);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    animationFrame = requestAnimationFrame(render);
+    ctx.clearRect(0, 0, width, height);
+
+    const background = ctx.createLinearGradient(0, 0, width, height);
+    background.addColorStop(0, "#06210e");
+    background.addColorStop(0.42, "#1c5525");
+    background.addColorStop(0.72, "#4f8740");
+    background.addColorStop(1, "#061a0c");
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.globalCompositeOperation = "screen";
+
+    waves.forEach((wave, index) => {
+      const phase = timestamp * wave.speed + index * 1.7;
+      const baseY = height * wave.y;
+      const path = new Path2D();
+
+      for (let x = -24; x <= width + 24; x += 8) {
+        const progress = x / width;
+        const y =
+          baseY +
+          Math.sin(progress * Math.PI * 2 * wave.freq + phase) * wave.amp +
+          Math.sin(progress * Math.PI * 4.2 + phase * 0.7) * wave.amp * 0.32;
+
+        if (x === -24) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
+      }
+
+      ctx.strokeStyle = wave.glow;
+      ctx.lineWidth = wave.width * 7;
+      ctx.lineCap = "round";
+      ctx.shadowBlur = 28;
+      ctx.shadowColor = wave.glow;
+      ctx.stroke(path);
+
+      ctx.strokeStyle = wave.color;
+      ctx.lineWidth = wave.width;
+      ctx.lineCap = "round";
+      ctx.shadowBlur = 18;
+      ctx.shadowColor = wave.color;
+      ctx.stroke(path);
+    });
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.shadowBlur = 0;
+
+    if (!prefersReducedMotion) {
+      animationFrame = requestAnimationFrame(render);
+    }
   };
 
   resize();
@@ -169,10 +179,6 @@ function initHeaderShader(canvas) {
   return () => {
     window.removeEventListener("resize", resize);
     cancelAnimationFrame(animationFrame);
-    gl.deleteBuffer(buffer);
-    gl.deleteProgram(program);
-    gl.deleteShader(vertexShader);
-    gl.deleteShader(fragmentShader);
   };
 }
 
