@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Карточка таланта / подрядчика</title>
+    <meta
+      name="description"
+      content="Простая карточка таланта или подрядчика для базы MATE."
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Source+Code+Pro:wght@500;700&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="profile" aria-labelledby="profile-title">
+        <div class="profile__toolbar">
+          <span class="profile__tag">Talent database</span>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему">
+            <span id="theme-toggle-label" aria-hidden="true">D</span>
+          </button>
+        </div>
+
+        <div class="profile__header">
+          <div class="avatar" aria-hidden="true">MS</div>
+          <div>
+            <p class="eyebrow">Карточка таланта / подрядчика</p>
+            <h1 id="profile-title">MATE Studio</h1>
+            <p class="profile__role">Продакшн, режиссура, монтаж</p>
+          </div>
+        </div>
+
+        <dl class="details">
+          <div class="field field--wide">
+            <dt>Имя/Фамилия или название студии/компании</dt>
+            <dd>MATE Studio</dd>
+          </div>
+
+          <div class="field">
+            <dt>Род занятий</dt>
+            <dd>Видеопродакшн, креативная разработка, постпродакшн</dd>
+          </div>
+
+          <div class="field">
+            <dt>Контакт</dt>
+            <dd>
+              <a id="contact-link" href="mailto:hello@example.com">hello@example.com</a>
+              <button class="icon-button" id="copy-contact" type="button" aria-label="Скопировать контакт">
+                <span aria-hidden="true">[]</span>
+              </button>
+            </dd>
+          </div>
+
+          <div class="field field--wide">
+            <dt>Описание / как он себя представляет</dt>
+            <dd>
+              Команда, которая закрывает полный цикл производства: от идеи и препродакшна
+              до съемки, монтажа, графики и финальной сдачи материалов.
+            </dd>
+          </div>
+
+          <div class="field">
+            <dt>Работали / не работали</dt>
+            <dd>
+              <div class="status-switch" role="group" aria-label="Статус сотрудничества">
+                <button class="status-switch__button is-active" type="button" data-status="worked">
+                  Работали
+                </button>
+                <button class="status-switch__button" type="button" data-status="not-worked">
+                  Не работали
+                </button>
+              </div>
+              <span class="status-pill" id="status-pill">Есть опыт работы</span>
+            </dd>
+          </div>
+
+          <div class="field">
+            <dt>Ставка гонорар / сумма проекта</dt>
+            <dd>от 150 000 ₽ за проект</dd>
+          </div>
+
+          <div class="field field--wide">
+            <dt>Комментарии</dt>
+            <dd>
+              Подходит для проектов, где важны аккуратная коммуникация, быстрые правки
+              и предсказуемая сдача материалов.
+            </dd>
+          </div>
+        </dl>
+
+        <footer class="profile__footer">
+          <span id="copy-message" class="copy-message" aria-live="polite"></span>
+          <span>Обновлено: <time id="updated-date" datetime=""></time></span>
+        </footer>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
