@@ -32,14 +32,15 @@
 
 ## Как опубликовать на GitHub Pages
 
-1. Загрузите файлы в репозиторий `tomarova-commits/MATE`.
-2. Откройте репозиторий на GitHub.
-3. Перейдите в `Settings` → `Pages`.
-4. В блоке `Build and deployment` выберите:
-   - `Source`: `Deploy from a branch`;
-   - `Branch`: `main`;
-   - папка: `/root`.
-5. Нажмите `Save`.
+1. Внесите изменения в ветку `main`.
+2. Сделайте коммит и отправьте его в GitHub.
+3. Обновите опубликованную ветку:
+
+```bash
+git push origin main:gh-pages
+```
+
+GitHub Pages публикует сайт из ветки `gh-pages`.
 
 После публикации GitHub покажет ссылку на сайт в этом же разделе `Pages`.
 
